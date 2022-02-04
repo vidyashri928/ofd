@@ -1,0 +1,41 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "ofdfront"
+  namespace: "default"
+  labels:
+    app: "ofdfront"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "ofdfront"
+  template:
+    metadata:
+      labels:
+        app: "ofdfront"
+    spec:
+      containers:
+      - name: "ofd-sha256-1"
+        image: "gcr.io/charged-ground-326209/github.com/vidyashri928/ofd@sha256:a5cd46cadbf21cc2dd688712fff28f46fec51a6f93b8dcb8d86c0b165d9adfc9"
+---
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "ofdfront-hpa-4kef"
+  namespace: "default"
+  labels:
+    app: "ofdfront"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "ofdfront"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      targetAverageUtilization: 80
